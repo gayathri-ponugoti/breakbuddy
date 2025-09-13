@@ -47,6 +47,11 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        status: {
+          focused: "hsl(var(--status-focused))",
+          tired: "hsl(var(--status-tired))",
+          "very-tired": "hsl(var(--status-very-tired))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
