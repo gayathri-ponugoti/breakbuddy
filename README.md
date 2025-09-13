@@ -2,8 +2,7 @@
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/ec83d357-8be9-4fa0-8dbd-ca42db7ae0ef
-
+**URL**: https://breakbuddy.lovable.app/
 ## How can I edit this code?
 
 There are several ways of editing your application.
