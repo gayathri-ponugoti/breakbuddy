@@ -4,12 +4,14 @@ import { TypingMonitor } from './TypingMonitor';
 import { FatigueStatus } from './FatigueStatus';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Brain, Shield, Clock, BarChart3 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Brain, Shield, Clock, BarChart3, Play, Square } from 'lucide-react';
 
 export const Dashboard = () => {
   const [facialMetrics, setFacialMetrics] = useState(null);
   const [typingMetrics, setTypingMetrics] = useState(null);
   const [sessionStart] = useState(Date.now());
+  const [isMonitoring, setIsMonitoring] = useState(true);
 
   const getSessionDuration = () => {
     const duration = Math.floor((Date.now() - sessionStart) / 1000);
@@ -42,6 +44,24 @@ export const Dashboard = () => {
               <Clock className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm font-mono">{getSessionDuration()}</span>
             </div>
+            <Button
+              onClick={() => setIsMonitoring(!isMonitoring)}
+              variant={isMonitoring ? "destructive" : "default"}
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              {isMonitoring ? (
+                <>
+                  <Square className="h-4 w-4" />
+                  Stop Monitoring
+                </>
+              ) : (
+                <>
+                  <Play className="h-4 w-4" />
+                  Start Monitoring
+                </>
+              )}
+            </Button>
             <Badge variant="outline" className="flex items-center gap-1">
               <Shield className="h-3 w-3" />
               Privacy Protected
@@ -54,12 +74,12 @@ export const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         {/* Webcam Monitor */}
         <div className="lg:col-span-1">
-          <WebcamMonitor onMetricsUpdate={setFacialMetrics} />
+          <WebcamMonitor onMetricsUpdate={setFacialMetrics} isActive={isMonitoring} />
         </div>
         
         {/* Typing Monitor */}
         <div className="lg:col-span-1">
-          <TypingMonitor onMetricsUpdate={setTypingMetrics} />
+          <TypingMonitor onMetricsUpdate={setTypingMetrics} isActive={isMonitoring} />
         </div>
         
         {/* Fatigue Status */}

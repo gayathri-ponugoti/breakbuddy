@@ -15,9 +15,10 @@ interface TypingMetrics {
 
 interface TypingMonitorProps {
   onMetricsUpdate: (metrics: TypingMetrics) => void;
+  isActive: boolean;
 }
 
-export const TypingMonitor = ({ onMetricsUpdate }: TypingMonitorProps) => {
+export const TypingMonitor = ({ onMetricsUpdate, isActive }: TypingMonitorProps) => {
   const [text, setText] = useState('');
   const [metrics, setMetrics] = useState<TypingMetrics>({
     wpm: 0,
@@ -150,8 +151,9 @@ export const TypingMonitor = ({ onMetricsUpdate }: TypingMonitorProps) => {
           value={text}
           onChange={(e) => handleTextChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Start typing here to begin monitoring your typing patterns..."
+          placeholder={isActive ? "Start typing here to begin monitoring your typing patterns..." : "Monitoring stopped - click Start Monitoring to resume"}
           className="min-h-[120px] resize-none"
+          disabled={!isActive}
         />
         
         <div className="grid grid-cols-2 gap-4">

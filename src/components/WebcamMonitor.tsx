@@ -12,9 +12,10 @@ interface FacialMetrics {
 
 interface WebcamMonitorProps {
   onMetricsUpdate: (metrics: FacialMetrics) => void;
+  isActive: boolean;
 }
 
-export const WebcamMonitor = ({ onMetricsUpdate }: WebcamMonitorProps) => {
+export const WebcamMonitor = ({ onMetricsUpdate, isActive }: WebcamMonitorProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -46,7 +47,7 @@ export const WebcamMonitor = ({ onMetricsUpdate }: WebcamMonitorProps) => {
 
   // Simulate facial analysis (in a real app, this would use MediaPipe or similar)
   const analyzeFace = () => {
-    if (!isStreaming) return;
+    if (!isStreaming || !isActive) return;
 
     // Simulate blink detection
     const now = Date.now();
@@ -75,18 +76,29 @@ export const WebcamMonitor = ({ onMetricsUpdate }: WebcamMonitorProps) => {
     onMetricsUpdate(newMetrics);
   };
 
+  const stopWebcam = () => {
+    if (videoRef.current?.srcObject) {
+      const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
+      tracks.forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+      setIsStreaming(false);
+    }
+  };
+
   useEffect(() => {
-    startWebcam();
-    
+    if (isActive) {
+      startWebcam();
+    } else {
+      stopWebcam();
+    }
+  }, [isActive]);
+
+  useEffect(() => {
     const interval = setInterval(analyzeFace, 100); // 10 FPS analysis
     
     return () => {
       clearInterval(interval);
-      // Cleanup webcam stream
-      if (videoRef.current?.srcObject) {
-        const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-        tracks.forEach(track => track.stop());
-      }
+      stopWebcam();
     };
   }, []);
 
@@ -116,7 +128,9 @@ export const WebcamMonitor = ({ onMetricsUpdate }: WebcamMonitorProps) => {
           />
           {!isStreaming && !error && (
             <div className="absolute inset-0 flex items-center justify-center bg-secondary/80 rounded-lg">
-              <p className="text-muted-foreground">Starting webcam...</p>
+              <p className="text-muted-foreground">
+                {isActive ? "Starting webcam..." : "Monitoring stopped"}
+              </p>
             </div>
           )}
           {error && (
